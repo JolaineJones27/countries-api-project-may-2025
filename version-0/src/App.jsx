@@ -13,11 +13,7 @@ function App() {
     </Link>
   </h1>
   <nav>
-    <ul>
-      <li>
         <Link to="/SavedCountries">Saved Countries</Link>
-      </li>
-    </ul>
   </nav>
 </header>
 
