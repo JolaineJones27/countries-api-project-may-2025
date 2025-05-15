@@ -10,7 +10,7 @@ import localData from '../localData';
 
 // this is my main App component - App
 function App() {
-  // I set up my state variable called countries which starts as a empty list. I will call the function setCountries later to update 
+  // I set up my state variable called countries which starts as a empty list. I will call the function setCountries later to update after I fetch the API
   const [countries, setCountries] = useState([]);
 
   // I use useEffect to run my code when the App first loads. The empty array makes it only run once
@@ -62,3 +62,5 @@ function App() {
 
 // export so I can use elsewhere
 export default App;
+
+// https://www.geeksforgeeks.org/how-to-write-a-pseudo-code/.
