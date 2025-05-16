@@ -4,7 +4,7 @@ function CountryCardList({ data }) {
   // I start the JSX that will show
   return (
     // div for styling
-    <div className="card-list">
+    <div className="countries-list">
       {/* // I loop thru each country in the data array */}
       {data.map((country) => (
         // for each country it renders a Countrycard component. The key helps React keep track of each card using a 3 letter country code if there is one available, if not it uses country.name

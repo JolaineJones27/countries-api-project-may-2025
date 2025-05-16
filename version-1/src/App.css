@@ -67,17 +67,16 @@ body {
 
 .countries-list {
   display: grid;
-  /* // if i take this out, mobile works */
-  grid-template-columns: repeat(4, 1fr); 
+  grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
-  max-width: 1280px; 
+  max-width: 1280px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
 
-@media screen and (max-width: 375px) {
+@media screen and (min-width: 375) {
   #root {
-    max-width: 375px;
+    max-width: 375;
     padding: 0.5rem 0;
     text-align: left;
   }
