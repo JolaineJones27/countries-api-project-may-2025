@@ -23,9 +23,12 @@ function UserForm() {
   }
 
   return (
+    // I'm rendering a container
     <div style={{ maxWidth: "480px", margin: "0 auto" }}>
       <h2>My Profile</h2>
-      <form onSubmit={handleSubmit}>
+      {/* // I'm rendering a form element that when submitted calls handleSubmit */}
+    <form onSubmit={handleSubmit}>
+        {/* // renders a label for name */}
         <div style={{ marginBottom: "16px" }}>
           <label>
             Full Name
@@ -40,6 +43,7 @@ function UserForm() {
           </label>
         </div>
 
+        {/* // renders a label for Email */}
         <div style={{ marginBottom: "16px" }}>
           <label>
             Email
@@ -54,6 +58,7 @@ function UserForm() {
           </label>
         </div>
 
+        {/* // renders a labeled text area for Message */}
         <div style={{ marginBottom: "16px" }}>
           <label>
             Message
@@ -75,6 +80,7 @@ function UserForm() {
   );
 }
 
+// exports so I can use in other places
 export default UserForm;
 
 // https://legacy.reactjs.org/docs/forms.html
