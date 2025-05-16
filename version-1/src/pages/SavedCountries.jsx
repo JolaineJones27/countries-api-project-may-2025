@@ -5,6 +5,7 @@ function UserForm() {
   // I create a seperate state variable for each input using the hook useSate
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [userCountry, setUserCountry] = useState ("");
   const [message, setMessage] = useState("");
 
   // This function runs when the form is submitted
@@ -14,21 +15,20 @@ function UserForm() {
     console.log("User Info Submitted:", {
       name: name,
       email: email,
+      country: userCountry,
       message: message,
     });
     // I clear the input fields
     setName("");
     setEmail("");
+    setUserCountry("");
     setMessage("");
   }
 
   return (
-    // I'm rendering a container
     <div style={{ maxWidth: "480px", margin: "0 auto" }}>
       <h2>My Profile</h2>
-      {/* // I'm rendering a form element that when submitted calls handleSubmit */}
-    <form onSubmit={handleSubmit}>
-        {/* // renders a label for name */}
+      <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: "16px" }}>
           <label>
             Full Name
@@ -43,7 +43,6 @@ function UserForm() {
           </label>
         </div>
 
-        {/* // renders a label for Email */}
         <div style={{ marginBottom: "16px" }}>
           <label>
             Email
@@ -58,7 +57,20 @@ function UserForm() {
           </label>
         </div>
 
-        {/* // renders a labeled text area for Message */}
+        <div style={{ marginBottom: "16px" }}>
+          <label>
+            Country
+            <input
+              type="text"
+              value={userCountry}
+              onChange={(e) => setUserCountry(e.target.value)}
+              placeholder="Enter your country"
+              style={{ display: "block", width: "100%", padding: "8px" }}
+              required
+            />
+          </label>
+        </div>
+
         <div style={{ marginBottom: "16px" }}>
           <label>
             Message
@@ -80,7 +92,6 @@ function UserForm() {
   );
 }
 
-// exports so I can use in other places
 export default UserForm;
 
 // https://legacy.reactjs.org/docs/forms.html
