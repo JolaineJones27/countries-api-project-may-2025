@@ -4,6 +4,7 @@ import CountryCardList from "../components/CountryCardList";
 
 // I create a component called SavedCountries
 function SavedCountries() {
+  // --- User Form state ---
   // I create a seperate state variable for each input using the hook useState
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -12,22 +13,26 @@ function SavedCountries() {
   // tracks if user has submitted
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  // useEffect runs when the component is created and inserted into the DOM for the first time, checks localStorage for user profile
+  // I make a state variable to store the saved countries
+  const [savedCountries, setSavedCountries] = useState([]);
+
+  // 2. RETRIEVING FORM DATA:
+
+  // the useEffect hook runs when the page loads, checks localStorage for user profile
   useEffect(() => {
     const storedProfile = localStorage.getItem("userProfile");
     // if the profile is there, do this: 
     if (storedProfile) {
-      // parses the saved JSON string and gets the values
-      const { name, email, country, message } = JSON.parse(storedProfile);
+      // parses the saved JSON string and gets the values - it sets the state variable to true
+      const { name } = JSON.parse(storedProfile);
       setName(name);
-      setEmail(email);
-      setUserCountry(country);
-      setMessage(message);
       setHasSubmitted(true);
     }
   }, []);
-
-  // This function runs when the form is submitted
+  
+  // 1b. STORING FORM DATA:
+  
+  // This function runs when the form is submitted. This puts the form data in an object, then using stringify it converts to a string and saves it the the browsers local storage with the key userProfile - it updates state to true to indicate the profile has been saved.
   function handleSubmit(event) {
     // Stops the page from reloading
     event.preventDefault();
@@ -42,11 +47,7 @@ function SavedCountries() {
     setHasSubmitted(true); 
   }
 
-  // --- Saved Countries state ---
-  // I make a state variable to store the saved countries
-  const [savedCountries, setSavedCountries] = useState([]);
-
-  // useEffect runs when the component is created and inserted into the DOM for the first time, checks localStorage for saved countries
+  // useEffect runs when the page loads, checks localStorage for saved countries
   useEffect(() => {
     // function to load saved countries from localStorage
     function loadSavedCountries() {
@@ -69,79 +70,84 @@ function SavedCountries() {
 
   return (
     <div>
-       {/* Form Section  */}
       <div style={{ maxWidth: "480px", margin: "0 auto" }}>
-        <h2>My Profile</h2>
+       
+       {/* // 3. RENDERING FORM DATA */}
+
+        {/* // using the hasSubmitted state to decide what to show - if hasSubmitted is true the welcome message displays, if not the form pops up */}
         {hasSubmitted ? (
           <div>
-            <h3>Welcome, {name}!</h3>
-            <p>
-              <strong>Email:</strong> {email}<br />
-              <strong>Country:</strong> {userCountry}<br />
-              <strong>Bio:</strong> {message}
-            </p>
+            <h2>Welcome, {name}!</h2>
           </div>
         ) : (
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: "16px" }}>
-              <label>
-                Full Name
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your full name"
-                  style={{ display: "block", width: "100%", padding: "8px" }}
-                  required
-                />
-              </label>
-            </div>
-            <div style={{ marginBottom: "16px" }}>
-              <label>
-                Email
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  style={{ display: "block", width: "100%", padding: "8px" }}
-                  required
-                />
-              </label>
-            </div>
-            <div style={{ marginBottom: "16px" }}>
-              <label>
-                Country
-                <input
-                  type="text"
-                  value={userCountry}
-                  onChange={(e) => setUserCountry(e.target.value)}
-                  placeholder="Enter your country"
-                  style={{ display: "block", width: "100%", padding: "8px" }}
-                  required
-                />
-              </label>
-            </div>
-            <div style={{ marginBottom: "16px" }}>
-              <label>
-                Message
-                <textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Tell us something..."
-                  style={{ display: "block", width: "100%", padding: "8px", minHeight: "56px" }}
-                  required
-                />
-              </label>
-            </div>
-            <button type="submit" style={{ padding: "10px 24px" }}>
-              Submit
-            </button>
-          </form>
+          <>
+            <h2>My Profile</h2>
+            <form onSubmit={handleSubmit}>
+              <div style={{ marginBottom: "16px" }}>
+                <label>
+                  Full Name
+                  
+                  {/* 1. STORING ALL USER DATA:  */}
+
+                  {/* // Each input field is connected to a state variable. The values are updated in my components state. When the user submits my handleSubmit function runs (line 33) */}
+                  
+                  <input
+                    type="text"
+                    // value and onChange props connect them to a state variable
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter your full name"
+                    style={{ display: "block", width: "100%", padding: "8px" }}
+                    required
+                  />
+                </label>
+              </div>
+              <div style={{ marginBottom: "16px" }}>
+                <label>
+                  Email
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    style={{ display: "block", width: "100%", padding: "8px" }}
+                    required
+                  />
+                </label>
+              </div>
+              <div style={{ marginBottom: "16px" }}>
+                <label>
+                  Country
+                  <input
+                    type="text"
+                    value={userCountry}
+                    onChange={(e) => setUserCountry(e.target.value)}
+                    placeholder="Enter your country"
+                    style={{ display: "block", width: "100%", padding: "8px" }}
+                    required
+                  />
+                </label>
+              </div>
+              <div style={{ marginBottom: "16px" }}>
+                <label>
+                  Message
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Tell us something..."
+                    style={{ display: "block", width: "100%", padding: "8px", minHeight: "56px" }}
+                    required
+                  />
+                </label>
+              </div>
+              <button type="submit" style={{ padding: "10px 24px" }}>
+                Submit
+              </button>
+            </form>
+          </>
         )}
       </div>
 
-      {/* --- Saved Countries Section --- */}
       <div style={{ marginTop: "2rem" }}>
         <h2>Saved Countries</h2>
         {/* If there are no saved countries, show a message */}
@@ -156,7 +162,6 @@ function SavedCountries() {
   );
 }
 
-// export so I can use elsewhere
 export default SavedCountries;
 
 // https://legacy.reactjs.org/docs/forms.html
