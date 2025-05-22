@@ -32,7 +32,7 @@ function SavedCountries() {
   
   // 1b. STORING FORM DATA:
   
-  // This function runs when the form is submitted. This puts the form data in an object, then using stringify it converts to a string and saves it the the browsers local storage with the key userProfile - it updates state to true to indicate the profile has been saved.
+  // This function runs when the form is submitted. This puts the form data in an object, then using stringify it converts to a string and saves it the the local storage with the key userProfile - it updates state to true to indicate the profile has been saved.
   function handleSubmit(event) {
     // Stops the page from reloading
     event.preventDefault();
@@ -89,7 +89,7 @@ function SavedCountries() {
                   
                   {/* 1. STORING ALL USER DATA:  */}
 
-                  {/* // Each input field is connected to a state variable. The values are updated in my components state. When the user submits my handleSubmit function runs (line 33) */}
+                  {/* // Each input field is connected to a state variable. The values are updated. When the user submits my handleSubmit function runs (line 33) */}
                   
                   <input
                     type="text"
