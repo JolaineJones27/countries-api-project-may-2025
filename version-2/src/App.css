@@ -79,6 +79,10 @@ body {
   color: black;
 }
 
+.profile-heading {
+  color: black;
+}
+
 @media screen and (max-width: 375px) {
   #root {
     max-width: 375px;

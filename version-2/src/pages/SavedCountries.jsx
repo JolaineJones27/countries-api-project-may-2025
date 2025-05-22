@@ -81,7 +81,7 @@ function SavedCountries() {
           </div>
         ) : (
           <>
-            <h2>My Profile</h2>
+            <h2 class="profile-heading">My Profile</h2>
             <form onSubmit={handleSubmit}>
               <div style={{ marginBottom: "16px" }}>
                 <label>
