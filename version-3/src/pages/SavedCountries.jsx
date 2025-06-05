@@ -31,7 +31,7 @@ function SavedCountries() {
           if (data && data.name) {
             setName(data.name);
             setEmail(data.email || '');
-            setUserCountry(data.countryOfOrigin || data.country || '');
+            setUserCountry(data.country_name || data.country || '');
             setMessage(data.bio || data.message || '');
             setHasSubmitted(true);
           }
@@ -52,7 +52,7 @@ function SavedCountries() {
     const userProfile = {
       name,
       email,
-      countryOfOrigin: userCountry,
+      country_name: userCountry,
       bio: message,
     };
     try {
@@ -66,17 +66,16 @@ function SavedCountries() {
         const newUser = await response.json();
         setName(newUser.name);
         setEmail(newUser.email || '');
-        setUserCountry(newUser.countryOfOrigin || newUser.country || '');
+        setUserCountry(newUser.country_name || newUser.country || '');
         setMessage(newUser.bio || newUser.message || '');
         setHasSubmitted(true);
       } else {
-        // Optionally handle error (e.g., show a message)
-        setHasSubmitted(true); // Still show welcome for demo
+        // handle error (show a message)
+        setHasSubmitted(true); 
       }
     } catch (err) {
       console.error('Failed to submit user profile', err);
-      // Optionally show an error message
-    }
+      setHasSubmitted(false);    }
   }
 
   // useEffect runs when the page loads, fetches saved country names from the backend (instructor's API)
