@@ -8,7 +8,7 @@ function CountryCard({ country }) {
   const capital = country.capital?.[0] || "No capital";
   const region = country.region || "No region";
   const population = country.population?.toLocaleString() || "No data";
-  const flagPng = country.flags?.png; // don't use || "" here
+  const flagPng = country.flags?.png; 
 
   // shows how the UI should look
   return (

@@ -55,7 +55,6 @@ function App() {
         </h1>
         {/* link to the Saved Countries page */}
         <nav>
-          {/* FIX: Use the correct, lowercase/dashed path everywhere */}
           <Link to="/saved-countries">Saved Countries</Link>
         </nav>
       </header>

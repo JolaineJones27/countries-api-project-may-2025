@@ -1,4 +1,4 @@
-// useState manages state variables in the component - useEffect for side effects like incrementing view count
+// useState manages state variables in the component - useEffect for side effects like increasing the view count
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 
@@ -7,35 +7,35 @@ function CountryDetail({ countries }) {
   // uses the useParams hook to get the name from the Url
   const { countryName } = useParams();
 
-  // Defensive: if the countries list hasn't loaded yet it shows a message
+  // Defensive - prevents errors if the data isnt loaded and shows a message
   if (!countries || countries.length === 0) {
     return <div>Loading...</div>;
   }
 
-  // looks thru the countries list to find the country whose name matches the one in the URL ignoring case
+  // looks thru the countries list to find the country whose name matches the one in the URL ignoring the case (A or a)
   const country = countries.find(
     (c) => c.name?.common?.toLowerCase() === countryName?.toLowerCase()
   );
 
-  // if no country is found, it will give a message
+  // if no country is found it will give a message
   if (!country) {
     return <div>Country not found.</div>;
   }
 
-  // key for localStorage: unique for each country
+  // key for localStorage - different for each country
   const key = `country-view-count-${country.name.common}`;
 
-  // useState to store the current view count (initialize from localStorage)
+  // useState to store the current view count - from localStorage
   const [viewCount, setViewCount] = useState(() =>
     parseInt(localStorage.getItem(key) || "0", 10)
   );
 
-  // useRef to prevent double-increment in React Strict Mode
+  // useRef to prevent it doubling the count in strict mode
   const hasIncremented = useRef(false);
 
   // useEffect runs the increment logic only when the country changes
   useEffect(() => {
-    // Reset the guard when the country changes
+    // reset the guard when the country changes
     hasIncremented.current = false;
     // Run increment in a microtask so React can finish the double-invoke cycle
     setTimeout(() => {
@@ -59,7 +59,7 @@ function CountryDetail({ countries }) {
         const res = await fetch("/api/get-all-saved-countries");
         if (res.ok) {
           const data = await res.json();
-          // Defensive: handle array of strings or objects
+          // Defensive -  handles an array of strings or objects
           const namesArray = Array.isArray(data) ? data : data.countries || [];
           const found = namesArray.some((item) =>
             typeof item === "string"
@@ -69,14 +69,14 @@ function CountryDetail({ countries }) {
           setIsSaved(found);
         }
       } catch (err) {
-        // If API fails, assume not saved
+        // If API fails then assume its not saved
         setIsSaved(false);
       }
     }
     checkIfSaved();
   }, [country.name.common]);
 
-  // This function saves the country to the backend (not localStorage)
+  // This function saves the country to the backend not localStorage
   async function handleSaveCountry() {
     try {
       // POST to backend API to save the country (replace with your actual endpoint and payload)
@@ -87,10 +87,10 @@ function CountryDetail({ countries }) {
       });
       if (res.ok) {
         setIsSaved(true);
-        // Dispatch custom event so SavedCountries page updates immediately
+        // sends custom event so SavedCountries page updates immediately
         document.dispatchEvent(new Event("savedCountriesUpdated"));
       } else {
-        // Optionally show an error message
+        // or error message
         alert("Failed to save country.");
       }
     } catch (err) {

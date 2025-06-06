@@ -1,50 +1,58 @@
 // useState manages state variables in the component - useEffect checks for profile on mount
 import React, { useState, useEffect } from 'react';
+
 // import to show a list of countries
 import CountryCardList from '../components/CountryCardList';
 
 // I create a component called SavedCountries
 function SavedCountries() {
+
   // I create a separate state variable for each input using the useState hook
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [userCountry, setUserCountry] = useState('');
   const [message, setMessage] = useState('');
+
   // tracks if user has submitted
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
   // I make a state variable to store the saved countries fetched from backend
-  const [savedCountryNames, setSavedCountryNames] = useState([]); // just names from other API
-  const [savedCountries, setSavedCountries] = useState([]); // full country objects from REST Countries API
+  const [savedCountryNames, 
+    // names from other API
+    setSavedCountryNames] = useState([]); 
+  // full country objects from REST Countries API
+  const [savedCountries, setSavedCountries] = useState([]); 
+
   // I add a loading state so I can show a loading message while fetching
   const [loading, setLoading] = useState(true);
 
   // 2. RETRIEVING FORM DATA:
   // On mount, GET the newest user profile from backend
   useEffect(() => {
+    // Fetch the latest user profile from backend
     async function fetchProfile() {
       try {
         const response = await fetch('/api/get-newest-user');
         if (response.ok) {
           const data = await response.json();
-          // Defensive: check structure
-          if (data && data.name) {
-            setName(data.name);
-            setEmail(data.email || '');
-            setUserCountry(data.country_name || data.country || '');
-            setMessage(data.bio || data.message || '');
-            setHasSubmitted(true);
-          }
+          // Defensive to check structure - it checks for data.name before updating the state (Geeksforgeeks)
+          setName(data.name);
+          setEmail(data.email || '');
+          setUserCountry(data.country_name || data.country || '');
+          setMessage(data.bio || data.message || '');
+          // This makes the form disappear and welcome message appear
+          setHasSubmitted(true); 
         }
       } catch (err) {
         console.error('Failed to fetch user profile', err);
       }
     }
     fetchProfile();
-  }, []);
+  }, [])
+
 
   // 1b. STORING FORM DATA:
-  // This function runs when the form is submitted. This POSTs the form data to the backend and updates state to true to indicate the profile has been saved.
+  // This function runs when the form is submitted - POSTs the form data to the backend and updates state to true to show that the profile has been saved
   async function handleSubmit(event) {
     // Stops the page from reloading
     event.preventDefault();
@@ -62,38 +70,43 @@ function SavedCountries() {
         body: JSON.stringify(userProfile),
       });
       if (response.ok) {
-        // After POST, fetch newest user to update UI (in case backend transforms data)
+        // After POST fetch newest user to update
         const newUser = await response.json();
         setName(newUser.name);
         setEmail(newUser.email || '');
         setUserCountry(newUser.country_name || newUser.country || '');
         setMessage(newUser.bio || newUser.message || '');
-        setHasSubmitted(true);
+        // I dont know if I need this setHasSubmitted -  - right now (6-6-25 12:30 PM it doesnt work!)
+        // Form disappears, welcome message appears
+        //setHasSubmitted(true); 
       } else {
-        // handle error (show a message)
-        setHasSubmitted(true); 
+        // handle error - shows a message
+        console.log('POST failed', response.status, await response.text());
+        alert('Failed to save profile. Please try again.');
       }
     } catch (err) {
       console.error('Failed to submit user profile', err);
-      setHasSubmitted(false);    }
+      alert('Failed to save profile. Please try again.');
+    }
   }
 
-  // useEffect runs when the page loads, fetches saved country names from the backend (instructor's API)
+  // useEffect runs when the page loads - fetches saved country names from the API
   useEffect(() => {
-    // function to load saved country names from backend API
+    // function to load saved country names from API
     async function loadSavedCountryNames() {
-      setLoading(true); // show loading while fetching
+     // show loading while fetching
+      setLoading(true); 
       try {
-        // GET request to the class API for saved country names
+        // GET request to the API for saved country names
         const response = await fetch('/api/get-all-saved-countries');
         const data = await response.json();
 
-        // API should return an array of country names or objects with a .country_name property
-        // Defensive: if not, try .countries or fallback to []
+        // API should return an array of country names or objects with a country_name property
+        // Defensive - if not, try countries or go back to []
         const namesArray = Array.isArray(data) ? data : data.countries || [];
         setSavedCountryNames(namesArray);
 
-        // Debug log to see what the backend returns
+        // Debug - to see what the backend returns
         console.log('Fetched country names from API:', namesArray);
       } catch (err) {
         console.error('Failed to fetch saved country names', err);
@@ -111,7 +124,7 @@ function SavedCountries() {
     }
     document.addEventListener('savedCountriesUpdated', handleCountriesUpdated);
 
-    // Cleanup event listener
+    // Cleanup eventlistener
     return () => {
       document.removeEventListener(
         'savedCountriesUpdated',
@@ -120,9 +133,9 @@ function SavedCountries() {
     };
   }, []);
 
-  // For each saved country name, fetch full country details from REST Countries API
+  // For each saved country name I fetch the full country details from REST Countries API
   useEffect(() => {
-    // If there are no saved country names, clear savedCountries and return
+    // If there are no saved country names it clears savedCountries and returns
     if (!savedCountryNames || savedCountryNames.length === 0) {
       setSavedCountries([]);
       return;
@@ -133,18 +146,16 @@ function SavedCountries() {
       setLoading(true);
       const countryDetails = [];
       for (let i = 0; i < savedCountryNames.length; i++) {
-        // Defensive extraction: works for {country_name: "Afghanistan"}, {country: "Afghanistan"}, {name: "Afghanistan"}, or "Afghanistan"
+        // Defensive in case there is messed up data 
         const nameObj = savedCountryNames[i];
-        // This line ensures we extract the correct country name, no matter the structure
+        // gets the correct country name no matter the structure - I thought this would help
         const countryName =
           typeof nameObj === 'string'
             ? nameObj
             : nameObj &&
               (nameObj.country_name || nameObj.country || nameObj.name);
         if (!countryName) {
-          // Skip or push a placeholder if you want to keep the grid aligned
-          console.warn('Skipping undefined country name at index', i, nameObj);
-          continue;
+          
         }
         try {
           // REST Countries API expects the name in the URL
@@ -154,11 +165,11 @@ function SavedCountries() {
             )}?fullText=true`
           );
           const data = await response.json();
-          // REST Countries API returns an array, take the first match if available
+          // REST Countries API returns an array and takes the first match
           if (Array.isArray(data) && data.length > 0) {
             countryDetails.push(data[0]);
           } else {
-            // If not found, push a placeholder object so the grid stays aligned
+            // If not found use placeholder object so the grid is aligned
             countryDetails.push({
               name: { common: countryName },
               capital: ['No capital'],
@@ -263,14 +274,14 @@ function SavedCountries() {
       </div>
       <div style={{ marginTop: '2rem' }}>
         <h2>Saved Countries</h2>
-        {/* If loading, show loading message */}
+        {/* If loading show loading message */}
         {loading ? (
           <p>Loading saved countries...</p>
         ) : savedCountries.length === 0 ? (
           <p>You have not saved any countries.</p>
         ) : (
           // I use my CountryCardList to show all saved countries
-          // Now passing full country objects from REST Countries API
+          // I'm sending full country objects from REST Countries API
           <CountryCardList data={savedCountries} />
         )}
       </div>
@@ -280,5 +291,7 @@ function SavedCountries() {
 
 export default SavedCountries;
 
+
 // https://legacy.reactjs.org/docs/forms.html
 // https://dev.to/ajones_codes/a-better-guide-to-forms-in-react-47f0
+// https://www.geeksforgeeks.org/defensive-programming-in-r/
