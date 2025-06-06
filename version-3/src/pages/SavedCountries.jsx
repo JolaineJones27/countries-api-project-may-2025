@@ -17,39 +17,41 @@ function SavedCountries() {
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
   // I make a state variable to store the saved countries fetched from backend
-  const [savedCountryNames, 
-    // names from other API
-    setSavedCountryNames] = useState([]); 
-  // full country objects from REST Countries API
+  const [savedCountryNames, setSavedCountryNames] = useState([]); 
   const [savedCountries, setSavedCountries] = useState([]); 
 
   // I add a loading state so I can show a loading message while fetching
   const [loading, setLoading] = useState(true);
 
   // 2. RETRIEVING FORM DATA:
-  // On mount, GET the newest user profile from backend
+  // On mount, check localStorage first to see if this visitor already submitted the form
   useEffect(() => {
-    // Fetch the latest user profile from backend
+    const alreadySubmitted = localStorage.getItem('hasSubmitted');
+    if (alreadySubmitted) {
+      // If user already submitted, show welcome message right away
+      setHasSubmitted(true);
+      // Optionally, you can also fetch and show their profile here if needed
+      return;
+    }
+    // If not, fetch the latest user profile from backend (for display, not to hide the form)
     async function fetchProfile() {
       try {
         const response = await fetch('/api/get-newest-user');
         if (response.ok) {
           const data = await response.json();
           // Defensive to check structure - it checks for data.name before updating the state (Geeksforgeeks)
-          setName(data.name);
+          setName(data.name || '');
           setEmail(data.email || '');
           setUserCountry(data.country_name || data.country || '');
           setMessage(data.bio || data.message || '');
-          // This makes the form disappear and welcome message appear
-          setHasSubmitted(true); 
+          // DO NOT setHasSubmitted(true) here, so form still shows to new visitors
         }
       } catch (err) {
         console.error('Failed to fetch user profile', err);
       }
     }
     fetchProfile();
-  }, [])
-
+  }, []);
 
   // 1b. STORING FORM DATA:
   // This function runs when the form is submitted - POSTs the form data to the backend and updates state to true to show that the profile has been saved
@@ -76,9 +78,9 @@ function SavedCountries() {
         setEmail(newUser.email || '');
         setUserCountry(newUser.country_name || newUser.country || '');
         setMessage(newUser.bio || newUser.message || '');
-        // I dont know if I need this setHasSubmitted -  - right now (6-6-25 12:30 PM it doesnt work!)
-        // Form disappears, welcome message appears
-        //setHasSubmitted(true); 
+        // Set submitted state and remember in localStorage so form doesn't reappear for this visitor
+        setHasSubmitted(true);
+        localStorage.setItem('hasSubmitted', 'true');
       } else {
         // handle error - shows a message
         console.log('POST failed', response.status, await response.text());
@@ -94,7 +96,6 @@ function SavedCountries() {
   useEffect(() => {
     // function to load saved country names from API
     async function loadSavedCountryNames() {
-     // show loading while fetching
       setLoading(true); 
       try {
         // GET request to the API for saved country names
@@ -102,7 +103,6 @@ function SavedCountries() {
         const data = await response.json();
 
         // API should return an array of country names or objects with a country_name property
-        // Defensive - if not, try countries or go back to []
         const namesArray = Array.isArray(data) ? data : data.countries || [];
         setSavedCountryNames(namesArray);
 
@@ -155,7 +155,7 @@ function SavedCountries() {
             : nameObj &&
               (nameObj.country_name || nameObj.country || nameObj.name);
         if (!countryName) {
-          
+          continue;
         }
         try {
           // REST Countries API expects the name in the URL
@@ -213,7 +213,6 @@ function SavedCountries() {
                   {/* 1. storing user data  */}
                   <input
                     type="text"
-                    // value and onChange props connect them to a state variable
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Enter your full name"
@@ -280,8 +279,6 @@ function SavedCountries() {
         ) : savedCountries.length === 0 ? (
           <p>You have not saved any countries.</p>
         ) : (
-          // I use my CountryCardList to show all saved countries
-          // I'm sending full country objects from REST Countries API
           <CountryCardList data={savedCountries} />
         )}
       </div>
@@ -290,7 +287,6 @@ function SavedCountries() {
 }
 
 export default SavedCountries;
-
 
 // https://legacy.reactjs.org/docs/forms.html
 // https://dev.to/ajones_codes/a-better-guide-to-forms-in-react-47f0
