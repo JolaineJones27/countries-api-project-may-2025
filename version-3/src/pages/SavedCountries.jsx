@@ -1,36 +1,36 @@
-// useState manages state variables in the component - useEffect checks for profile on mount
+// useState lets me create state variables in the component and the page will update if I change them - useEffect runs code after the component mounts - (just truly understood what this word means again ("mount")) - it means shows up for the first time ) - with a empty array at the end it will only run once after it first renders
 import React, { useState, useEffect } from 'react';
 
-// import to show a list of countries
+// import to later show a list of countries 
 import CountryCardList from '../components/CountryCardList';
 
-// I create a component called SavedCountries
+// defining my main component called SavedCountries that shows a list of cards
 function SavedCountries() {
 
-  // I create a separate state variable for each input using the useState hook
+  // I create a separate state variable for each input using the useState hook - start as empty strings because they havent filled out the form yet
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [userCountry, setUserCountry] = useState('');
   const [message, setMessage] = useState('');
 
-  // tracks if user has submitted
+  // tracks if user has submitted - starts as the boolean false saying they havent submitted yet
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  // I make a state variable to store the saved countries fetched from backend
+  // I make state variables to store the saved countries fetched from backend - savedCountryNames is a list from the backend and its empty at first 
   const [savedCountryNames, setSavedCountryNames] = useState([]); 
+  // holds the full data to render - empty at first too
   const [savedCountries, setSavedCountries] = useState([]); 
-
-  // I add a loading state so I can show a loading message while fetching
+  // I add a loading state so I can show a loading message while its loading - message shows until the fetching is done
   const [loading, setLoading] = useState(true);
 
   // 2. RETRIEVING FORM DATA:
-  // On mount, check localStorage first to see if this visitor already submitted the form
+  // runs once the components mounts (runs for the first time)
   useEffect(() => {
+    // I check localStorage first to see if this user already submitted the form
     const alreadySubmitted = localStorage.getItem('hasSubmitted');
     if (alreadySubmitted) {
-      // If user already submitted, show welcome message right away
+      // If already submitted the form doesnt show again
       setHasSubmitted(true);
-      // Optionally, you can also fetch and show their profile here if needed
       return;
     }
     // If not, fetch the latest user profile from backend (for display, not to hide the form)
@@ -44,7 +44,6 @@ function SavedCountries() {
           setEmail(data.email || '');
           setUserCountry(data.country_name || data.country || '');
           setMessage(data.bio || data.message || '');
-          // DO NOT setHasSubmitted(true) here, so form still shows to new visitors
         }
       } catch (err) {
         console.error('Failed to fetch user profile', err);
@@ -146,7 +145,7 @@ function SavedCountries() {
       setLoading(true);
       const countryDetails = [];
       for (let i = 0; i < savedCountryNames.length; i++) {
-        // Defensive in case there is messed up data 
+        // defensive in case there is messed up data 
         const nameObj = savedCountryNames[i];
         // gets the correct country name no matter the structure - I thought this would help
         const countryName =

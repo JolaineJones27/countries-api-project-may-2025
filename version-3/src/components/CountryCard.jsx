@@ -3,21 +3,21 @@ import '../App.css';
 
 // Defines a component that accepts a country object as a prop
 function CountryCard({ country }) {
-  // optional chaining (accesses values without causing errors if its not there and the OR (||) operator tells it to use the right side as a default
+  // optional chaining if missing it's undefined - the OR || operator gives a default value if the left side is false or null
   const name = country.name?.common || "No name";
   const capital = country.capital?.[0] || "No capital";
   const region = country.region || "No region";
   const population = country.population?.toLocaleString() || "No data";
   const flagPng = country.flags?.png; 
 
-  // shows how the UI should look
+  // returns jsx to display the card
   return (
     <div className="country-card">
-      {/* Only render the image if flagPng is truthy, otherwise render a placeholder or nothing */}
+      {/* Only render the image if flagPng is true - otherwise render a placeholder or nothing */}
       {flagPng ? (
         <img src={flagPng} alt={`Flag of ${name}`} />
       ) : (
-        // You can use a placeholder, icon, or just leave this blank
+        // I use a placeholder
         <div style={{
           width: 200,
           height: 120,

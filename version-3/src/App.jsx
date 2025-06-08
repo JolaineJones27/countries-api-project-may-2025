@@ -1,4 +1,4 @@
-// I'm importing the useEffect hook that lets you run code at certain times and the useState hook lets me store and update data in my component
+// I'm importing the useEffect hook that lets you run code at certain times like after render to do side effects - the useState hook lets me store and update data in my component
 import React, { useEffect, useState } from 'react';
 // Routes and Route let me show the different pages and Link makes a clickable link that'll change the page without reloading it
 import { Routes, Route, Link } from 'react-router-dom';
@@ -15,10 +15,10 @@ function App() {
   // I add a loading state to avoid rendering routes until countries are loaded
   const [loading, setLoading] = useState(true);
 
-  // I use useEffect to run my code when the App first loads. The empty array makes it only run once
+  // I use useEffect to run my code when the App first loads (mounts). The empty array makes it only run once
   useEffect(() => {
     // asking for the list from the API
-    fetch("https://restcountries.com/v3.1/all")
+    fetch("https://restcountries.com/v3.1/all?fields=name,flags,population,region,capital")
       // when the data comes back, it turns it into JSON  
       .then((res) => res.json())
       // Cassie showed me how to sort the countries alphabetically  
@@ -28,7 +28,7 @@ function App() {
         setCountries(data);
         setLoading(false); // data loaded
       })
-      // if something goes wrong with the internet it prints an error message then uses local data from my file and sorts it the same way
+      // if something goes wrong with the internet or there are errors it prints an error message then uses local data from my file and sorts it the same way
       .catch((err) => {
         console.error("Using fallback data:", err);
         setCountries(
@@ -62,7 +62,6 @@ function App() {
       {/* route components define the app pages */}
       <Routes>
         <Route path="/" element={<Home countries={countries} />} />
-        {/* FIX: Use the same lowercase/dashed path for the route */}
         <Route path="/saved-countries" element={<SavedCountries />} />
         <Route path="/country/:countryName" element={<CountryDetail countries={countries} />} />
       </Routes>
